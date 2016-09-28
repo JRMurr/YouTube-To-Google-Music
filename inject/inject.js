@@ -1,15 +1,8 @@
-// var greeting = "hola, ";
-// var button = document.getElementById("mybutton");
-// button.person_name = "Roberto";
-// button.addEventListener("click", function() {
-//   alert(greeting + button.person_name + ".");
-// }, false);
-
 String.prototype.replaceAt = function(index, character) {
     return this.substr(0, index) + character + this.substr(index + character.length);
 }
 
-function removeRegex(string, re, reLength, checkBoundry = true) {
+function removeRegex(string, re, checkBoundry = true) {
     var found = string.match(re);
     while (found != null && found.length != 0) {
         var index = string.indexOf(found[0])
@@ -19,8 +12,8 @@ function removeRegex(string, re, reLength, checkBoundry = true) {
             if (string.charAt(index - 1) !== " ") {
                 string = string.replaceAt(index - 1, " ");
             }
-            if (string.charAt(index + reLength) !== " ") {
-                string = string.replaceAt(index + reLength, " ");
+            if (string.charAt(index + found[0].length) !== " ") {
+                string = string.replaceAt(index + found[0].length, " ");
             }
         }
         string = string.replace(re, "");
@@ -35,11 +28,6 @@ chrome.extension.sendMessage({}, function(response) {
         if (document.readyState === "complete") {
             clearInterval(readyStateCheckInterval);
 
-            // ----------------------------------------------------------
-            // This part of the script triggers when page is done loading
-            //console.log("Hello dicks");
-            // ----------------------------------------------------------
-
             var actionButtons = document.getElementById('watch8-secondary-actions');
 
             var btn = document.createElement("BUTTON");
@@ -48,10 +36,11 @@ chrome.extension.sendMessage({}, function(response) {
             btn.onclick = function() {
                 var title = document.getElementById('eow-title').innerText;
 
-                title = removeRegex(title, /Full Album/gi, 10);
-								title = removeRegex(title, /High Quality/gi, 12);
-								title = removeRegex(title, /Audio Stream/gi, 12);
-								title = removeRegex(title, /[\[,(,{]HD[\],),}]/gi, -1,false); //-1 for length since it wont use it
+                title = removeRegex(title, /Full Album/gi);
+								title = removeRegex(title, /High Quality/gi);
+								title = removeRegex(title, /Audio Stream/gi);
+                title = removeRegex(title, /Music Video/gi);
+								title = removeRegex(title, /[\[,(,{]HD[\],),}]/gi,false);
                 var search = title.split(' ').join('+');
                 //console.log("search:"+search);
                 var url = "https://play.google.com/music/listen?u=0#/sr/" + search
